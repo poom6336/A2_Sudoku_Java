@@ -2,6 +2,9 @@ int[][] grid = new int[9][9];
 boolean[][] locked = new boolean[9][9];
 int gridSize = 50;
 int gridNumSize = 100;
+int selectRow = -1;
+int selectCol = -1;
+int selectNum = 0;
 
 void setup(){
     size(1000,500);
@@ -69,6 +72,60 @@ void drawNumpadNum(){
       }
     }
     text("-",600+gridNumSize+gridNumSize/2,3*gridNumSize+gridNumSize/2);
+}
+
+//Input number
+
+void mousePressed(){
+    if(mouseY < 9*gridSize && mouseX < 9*gridSize){
+        if(!locked[floor(mouseY/gridSize)][floor(mouseX/gridSize)]){
+            selectCol = floor(mouseX/gridSize);
+            selectRow = floor(mouseY/gridSize);
+        }else{
+            println("Can't change this number");
+        }
+    }
+    if(mouseY < 400 && mouseX > 600 && mouseX < 900){
+        if(mouseY < 100){
+            if(mouseX < 700){
+                selectNum = 1;
+            }else if(mouseX < 800){
+                selectNum = 2;
+            }else{
+                selectNum = 3;
+            }
+        }else if(mouseY < 200){
+            if(mouseX < 700){
+                selectNum = 4;
+            }else if(mouseX < 800){
+                selectNum = 5;
+            }else{
+                selectNum = 6;
+            }
+        }else if(mouseY < 300){
+            if(mouseX < 700){
+                selectNum = 7;
+            }else if(mouseX < 800){
+                selectNum = 8;
+            }else{
+                selectNum = 9;
+            }
+        }else{
+            if(mouseX > 700 && mouseX < 800){
+                selectNum = 0;
+            }
+        }
+    }
+    if(selectRow != -1 && selectCol != -1){
+        if(selectNum == 0 || checkValid(grid, selectNum, selectRow, selectCol)){
+            grid[selectRow][selectCol] = selectNum;
+            selectNum = 0;
+        }else {
+        if(selectRow != -1 && selectCol != -1){
+            println("Invalid number");
+            }
+        }
+    }
 }
 
 //Logic
