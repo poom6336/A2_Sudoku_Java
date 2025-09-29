@@ -1,10 +1,11 @@
 int[][] grid = new int[9][9];
+boolean[][] locked = new boolean[9][9];
 int gridSize = 50;
 int gridNumSize = 100;
 
 void setup(){
     size(1000,500);
-    createBoard();
+    newGame();
 }
 
 void draw(){
@@ -13,23 +14,6 @@ void draw(){
     drawNum();
     drawNumpadGrid();
     drawNumpadNum();
-}
-
-//random number and amount of number that appear
-
-void createBoard(){
-    for(int row = 0; row < 9; row++){
-        for(int col = 0; col < 9; col++){
-            if(int(random(9)) < 5){
-                grid[row][col] = int(random(1,10));
-                while(!checkValid(grid, grid[row][col], row, col)){
-                    grid[row][col] = int(random(1,10));
-                }
-            }else{
-                grid[row][col] = 0;
-            }
-        }
-    }
 }
 
 //display board
@@ -104,4 +88,55 @@ boolean checkValid(int[][] arr, int num, int row, int col){
         if(i != row && arr[i][col] == num) return false;
     }
     return true;
+}
+
+//random number and amount of number that appear
+
+void shuffleArray(Integer[] arr) {
+  for (int i = arr.length - 1; i > 0; i--) {
+    int j = int(random(i+1));
+    int tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+}
+
+boolean generateFullBoard(int[][] board) {
+  for (int row = 0; row < 9; row++) {
+    for (int col = 0; col < 9; col++) {
+      if (board[row][col] == 0) {
+        Integer[] numbers = {1,2,3,4,5,6,7,8,9};
+        shuffleArray(numbers);
+
+        for (int n : numbers) {
+          if (checkValid(board, n, row, col)) {
+            board[row][col] = n;
+            if (generateFullBoard(board)) return true;
+            board[row][col] = 0;
+          }
+        }
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+void newGame() {
+  int[][] full = new int[9][9];
+  generateFullBoard(full);
+
+  for (int r = 0; r < 9; r++) {
+    for (int c = 0; c < 9; c++) {
+      grid[r][c] = full[r][c];
+      locked[r][c] = true;
+    }
+  }
+  int holes = 50;
+  for (int k = 0; k < holes; k++) {
+    int r = int(random(9));
+    int c = int(random(9));
+    grid[r][c] = 0;
+    locked[r][c] = false;
+  }
 }
