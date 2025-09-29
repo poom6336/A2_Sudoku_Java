@@ -13,6 +13,7 @@ void setup(){
 
 void draw(){
     background(255);
+    drawGameUI();
     drawGrid();
     drawNum();
     drawNumpadGrid();
@@ -196,4 +197,23 @@ void newGame() {
     grid[r][c] = 0;
     locked[r][c] = false;
   }
+}
+
+//In game UI
+
+void drawGameUI(){
+    if (selectRow != -1 && selectCol != -1) {
+        fill(200, 200, 255, 100);
+        noStroke();
+        rect(selectCol*gridSize, selectRow*gridSize, gridSize, gridSize);
+    }
+    for(int row = 0; row < 9; row++){
+        for(int col = 0; col < 9; col++){
+            if(locked[row][col]){
+                fill(225);
+                noStroke();
+                rect(col*gridSize, row*gridSize, gridSize, gridSize);
+            }
+        }
+    }
 }
