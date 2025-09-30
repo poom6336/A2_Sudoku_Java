@@ -1,3 +1,4 @@
+
 int[][] grid = new int[9][9];
 boolean[][] locked = new boolean[9][9];
 int gridSize = 50;
