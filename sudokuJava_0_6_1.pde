@@ -1,4 +1,3 @@
-
 int[][] grid = new int[9][9];
 boolean[][] locked = new boolean[9][9];
 int gridSize = 50;
@@ -6,6 +5,7 @@ int gridNumSize = 100;
 int selectRow = -1;
 int selectCol = -1;
 int selectNum = 0;
+boolean answer = true;
 
 void setup(){
     size(1000,500);
@@ -83,6 +83,7 @@ void mousePressed(){
         if(!locked[floor(mouseY/gridSize)][floor(mouseX/gridSize)]){
             selectCol = floor(mouseX/gridSize);
             selectRow = floor(mouseY/gridSize);
+            answer = true;
         }else{
             println("Can't change this number");
         }
@@ -122,9 +123,12 @@ void mousePressed(){
         if(selectNum == 0 || checkValid(grid, selectNum, selectRow, selectCol)){
             grid[selectRow][selectCol] = selectNum;
             selectNum = 0;
+            answer = true;
         }else {
         if(selectRow != -1 && selectCol != -1){
+            selectNum = 0;
             println("Invalid number");
+            answer = false;
             }
         }
     }
@@ -204,7 +208,11 @@ void newGame() {
 
 void drawGameUI(){
     if (selectRow != -1 && selectCol != -1) {
-        fill(200, 200, 255, 100);
+        if(answer){
+            fill(200, 200, 255, 100);
+        }else{
+            fill(225,0,0,100);
+        }
         noStroke();
         rect(selectCol*gridSize, selectRow*gridSize, gridSize, gridSize);
     }
