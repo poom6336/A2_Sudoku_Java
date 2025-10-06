@@ -12,6 +12,7 @@ int menuY = 0;
 
 void setup(){
     size(1000,500);
+    stage = 0;
 }
 
 void draw(){
@@ -26,6 +27,11 @@ void draw(){
         drawNum();
         drawNumpadGrid();
         drawNumpadNum();
+        openMenu();
+        if(menuY > 0){
+          openMenu();
+          menuY-=20;
+        }
     }
 }
 
@@ -90,6 +96,7 @@ void mousePressed(){
     if(stage == 0){
         if(mouseX >= width/2-100 && mouseY >= 230 && mouseX <= width/2+100 && mouseY <= 270){
             stage = 1;
+            newGame();
         }
     }
     if(stage == 1){
@@ -248,11 +255,11 @@ void openMenu(){
     textAlign(CENTER,CENTER);
     textSize(50);
     fill(255);
-    text("A2 Sudoku the Game",width/2,100);
+    text("A2 Sudoku the Game",width/2,menuY-400);
     textSize(25);
-    rect(width/2-100,230,200,40);
-    rect(width/2-100,280,200,40);
+    rect(width/2-100,menuY-270,200,40);
+    rect(width/2-100,menuY-220,200,40);
     fill(0);
-    text("New Game",width/2,250);
-    text("Load Game",width/2,300);
+    text("New Game",width/2,menuY-250);
+    text("Load Game",width/2,menuY-200);
 }
