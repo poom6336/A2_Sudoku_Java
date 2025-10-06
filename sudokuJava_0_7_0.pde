@@ -6,19 +6,27 @@ int selectRow = -1;
 int selectCol = -1;
 int selectNum = 0;
 boolean answer = true;
+int stage = 0;
+int dificulty;
+int menuY = 0;
 
 void setup(){
     size(1000,500);
-    newGame();
 }
 
 void draw(){
-    background(255);
-    drawGameUI();
-    drawGrid();
-    drawNum();
-    drawNumpadGrid();
-    drawNumpadNum();
+    if(stage == 0){
+        menuY = height;
+        openMenu();
+    }
+    if(stage == 1){
+        background(255);
+        drawGameUI();
+        drawGrid();
+        drawNum();
+        drawNumpadGrid();
+        drawNumpadNum();
+    }
 }
 
 //display board
@@ -79,56 +87,63 @@ void drawNumpadNum(){
 //Input number
 
 void mousePressed(){
-    if(mouseY < 9*gridSize && mouseX < 9*gridSize){
-        if(!locked[floor(mouseY/gridSize)][floor(mouseX/gridSize)]){
-            selectCol = floor(mouseX/gridSize);
-            selectRow = floor(mouseY/gridSize);
-            answer = true;
-        }else{
-            println("Can't change this number");
+    if(stage == 0){
+        if(mouseX >= width/2-100 && mouseY >= 230 && mouseX <= width/2+100 && mouseY <= 270){
+            stage = 1;
         }
     }
-    if(mouseY < 400 && mouseX > 600 && mouseX < 900){
-        if(mouseY < 100){
-            if(mouseX < 700){
-                selectNum = 1;
-            }else if(mouseX < 800){
-                selectNum = 2;
+    if(stage == 1){
+        if(mouseY < 9*gridSize && mouseX < 9*gridSize){
+            if(!locked[floor(mouseY/gridSize)][floor(mouseX/gridSize)]){
+                selectCol = floor(mouseX/gridSize);
+                selectRow = floor(mouseY/gridSize);
+                answer = true;
             }else{
-                selectNum = 3;
-            }
-        }else if(mouseY < 200){
-            if(mouseX < 700){
-                selectNum = 4;
-            }else if(mouseX < 800){
-                selectNum = 5;
-            }else{
-                selectNum = 6;
-            }
-        }else if(mouseY < 300){
-            if(mouseX < 700){
-                selectNum = 7;
-            }else if(mouseX < 800){
-                selectNum = 8;
-            }else{
-                selectNum = 9;
-            }
-        }else{
-            if(mouseX > 700 && mouseX < 800){
-                selectNum = 0;
+                println("Can't change this number");
             }
         }
-    }
-    if(selectRow != -1 && selectCol != -1){
-        if(selectNum == 0 || checkValid(grid, selectNum, selectRow, selectCol)){
-            grid[selectRow][selectCol] = selectNum;
-            selectNum = 0;
-            answer = true;
-        }else {
+        if(mouseY < 400 && mouseX > 600 && mouseX < 900){
+            if(mouseY < 100){
+                if(mouseX < 700){
+                    selectNum = 1;
+                }else if(mouseX < 800){
+                    selectNum = 2;
+                }else{
+                    selectNum = 3;
+                }
+            }else if(mouseY < 200){
+                if(mouseX < 700){
+                    selectNum = 4;
+                }else if(mouseX < 800){
+                    selectNum = 5;
+                }else{
+                    selectNum = 6;
+                }
+            }else if(mouseY < 300){
+                if(mouseX < 700){
+                    selectNum = 7;
+                }else if(mouseX < 800){
+                    selectNum = 8;
+                }else{
+                    selectNum = 9;
+                }
+            }else{
+                if(mouseX > 700 && mouseX < 800){
+                    selectNum = 0;
+                }
+            }
+        }
         if(selectRow != -1 && selectCol != -1){
-            selectNum = 0;
-            println("Invalid number");
-            answer = false;
+            if(selectNum == 0 || checkValid(grid, selectNum, selectRow, selectCol)){
+                grid[selectRow][selectCol] = selectNum;
+                selectNum = 0;
+                answer = true;
+            }else {
+            if(selectRow != -1 && selectCol != -1){
+                selectNum = 0;
+                println("Invalid number");
+                answer = false;
+                }
             }
         }
     }
@@ -225,4 +240,19 @@ void drawGameUI(){
             }
         }
     }
+}
+
+void openMenu(){
+    fill(0);
+    rect(0,0,width,menuY);
+    textAlign(CENTER,CENTER);
+    textSize(50);
+    fill(255);
+    text("A2 Sudoku the Game",width/2,100);
+    textSize(25);
+    rect(width/2-100,230,200,40);
+    rect(width/2-100,280,200,40);
+    fill(0);
+    text("New Game",width/2,250);
+    text("Load Game",width/2,300);
 }
