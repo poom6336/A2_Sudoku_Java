@@ -10,6 +10,8 @@ int dificulty;
 int menuY = 0;
 int gridSize;
 boolean menuAni;
+boolean finCol;
+boolean finRow;
 
 
 void setup(){
@@ -313,6 +315,36 @@ void drawGameUI(){
             col++;
         }
         row++;
+    }
+    if(selectRow != -1 && selectCol != -1){
+        finCol = true;
+        row = 0;
+        while(row<9){
+            if(grid[row][selectCol] == 0) finCol = false;
+            row++;
+        }
+        if(finCol){
+            row = 0;
+            while(row<9){
+                fill(255,200,20,100);
+                rect(selectCol*gridSize, row*gridSize, gridSize, gridSize);
+                row++;
+            }
+        }
+        finRow = true;
+        int col = 0;
+        while(col<9){
+            if(grid[selectRow][col] == 0) finRow = false;
+            col++;
+        }
+        if(finRow){
+            col = 0;
+            while(col<9){
+                fill(255,200,20,100);
+                rect(col*gridSize, selectRow*gridSize, gridSize, gridSize);
+                col++;
+            }
+        }
     }
 }
 
