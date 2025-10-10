@@ -1,17 +1,21 @@
 int[][] grid = new int[9][9];
 boolean[][] locked = new boolean[9][9];
-int gridSize = 50;
-int gridNumSize = 100;
+int gridNumSize;
 int selectRow = -1;
 int selectCol = -1;
 int selectNum = 0;
 boolean answer = true;
 boolean stage = false;
-int dificulty = 0;
+int dificulty;
 int menuY = 0;
+int gridSize;
+boolean menuAni;
+
 
 void setup(){
-    size(1000,500);
+    size(width,height);
+    gridSize = width/9;
+    gridNumSize = width/5;
     stage = false;
     menuY = height;
 }
@@ -19,8 +23,11 @@ void setup(){
 void draw(){
     if(!stage){
         if(menuY < height){
-        menuY+=20;
-        }else background(0);
+            menuY+=height/25;
+        }else{
+            background(0);
+            menuAni = true;
+        }
         openMenu();
     }
     if(stage){
@@ -35,8 +42,8 @@ void draw(){
         openMenu();
         if(menuY > 0){
           openMenu();
-          menuY-=20;
-        }
+          menuY-=height/25;
+        }else menuAni = true;
     }
 }
 
@@ -59,7 +66,7 @@ void drawGrid(){
 
 void drawNum(){
     textAlign(CENTER,CENTER);
-    textSize(24);
+    textSize(gridSize/2);
     fill(0);
     int row = 0;
     while(row < 9){
@@ -81,48 +88,50 @@ void drawNumpadGrid(){
     strokeWeight(3);
     int i = 0;
     while(i < 4){
-        line(i*gridNumSize+600,0,i*gridNumSize+600,4*gridNumSize);
+        line(i*gridNumSize+gridNumSize,height/2+height/10,i*gridNumSize+gridNumSize,4*gridNumSize+height/2+height/10);
         i++;
     }
     i = 0;
     while(i < 5){
-        line(600,i*gridNumSize,3*gridNumSize+600,i*gridNumSize);
+        line(gridNumSize,i*gridNumSize+height/2+height/10,4*gridNumSize,i*gridNumSize+height/2+height/10);
         i++;
     }
 }
 
 void drawNumpadNum(){
     textAlign(CENTER,CENTER);
-    textSize(30);
+    textSize(gridNumSize/2);
     fill(0);
     int numpadNum = 1;
     int i = 0;
     while(i < 3){
       int j = 0;
       while(j < 3){
-          text(numpadNum, (j*gridNumSize)+600+(gridNumSize/2), (i*gridNumSize)+(gridNumSize/2));
+          text(numpadNum, j*gridNumSize+gridNumSize/2+gridNumSize, height/2+height/10+i*gridNumSize+gridNumSize/2);
           numpadNum++;
           j++;
       }
       i++;
     }
-    text("-",600+gridNumSize+gridNumSize/2,3*gridNumSize+gridNumSize/2);
+    text("-", gridNumSize*2+gridNumSize/2, height-gridNumSize/2);
 }
 
 //Input number
 
 void mousePressed(){
     if(!stage){
-        if(mouseX >= width/2-100 && mouseY >= menuY-270 && mouseX <= width/2+100 && mouseY <= menuY-230){
+        if(mouseX >= width/2-200 && mouseY >= menuY-height/2 && mouseX <= width/2+200 && mouseY <=  menuY-height/2+100){
             stage = true;
+            menuAni = false;
             newGame();
         }
-        if(mouseX >= width/2-100 && mouseY >= menuY-220 && mouseX <= width/2+100 && mouseY <= menuY-180){
+        if(mouseX >= width/2-200 && mouseY >= menuY-height/2+150 && mouseX <= width/2+200 && mouseY <= menuY-height/2+250){
+            loadGame();
             stage = true;
-            selectInput("Select game file: ","fileSelected");
+            menuAni = false;
         }
     }
-    if(stage){
+    if(stage && menuAni){
         if(mouseY < 9*gridSize && mouseX < 9*gridSize){
             if(!locked[floor(mouseY/gridSize)][floor(mouseX/gridSize)]){
                 selectCol = floor(mouseX/gridSize);
@@ -132,55 +141,57 @@ void mousePressed(){
                 println("Can't change this number");
             }
         }
-        if(mouseY < 400 && mouseX > 600 && mouseX < 900){
-            if(mouseY < 100){
-                if(mouseX < 700){
+        if(mouseY < height/2+gridNumSize*5 && mouseX > gridNumSize && mouseX < gridNumSize*4 && mouseY > height/2+gridNumSize){
+            if(mouseY < height/2+height/10+gridNumSize){
+                if(mouseX < gridNumSize*2){
                     selectNum = 1;
-                }else if(mouseX < 800){
+                }else if(mouseX < gridNumSize*3){
                     selectNum = 2;
                 }else{
                     selectNum = 3;
                 }
-            }else if(mouseY < 200){
-                if(mouseX < 700){
+            }else if(mouseY < height/2+height/10+gridNumSize*2){
+                if(mouseX < gridNumSize*2){
                     selectNum = 4;
-                }else if(mouseX < 800){
+                }else if(mouseX < gridNumSize*3){
                     selectNum = 5;
                 }else{
                     selectNum = 6;
                 }
-            }else if(mouseY < 300){
-                if(mouseX < 700){
+            }else if(mouseY < height/2+height/10+gridNumSize*3){
+                if(mouseX < gridNumSize*2){
                     selectNum = 7;
-                }else if(mouseX < 800){
+                }else if(mouseX < gridNumSize*3){
                     selectNum = 8;
                 }else{
                     selectNum = 9;
                 }
             }else{
-                if(mouseX > 700 && mouseX < 800){
+                if(mouseX > gridNumSize*2 && mouseX < gridNumSize*3){
                     selectNum = 0;
                 }
             }
-        }
-        if(selectRow != -1 && selectCol != -1){
-            if(selectNum == 0 || checkValid(grid, selectNum, selectRow, selectCol)){
-                grid[selectRow][selectCol] = selectNum;
-                selectNum = 0;
-                answer = true;
-            }else {
+        
             if(selectRow != -1 && selectCol != -1){
-                selectNum = 0;
-                println("Invalid number");
-                answer = false;
+                if(selectNum == 0 || checkValid(grid, selectNum, selectRow, selectCol)){
+                    grid[selectRow][selectCol] = selectNum;
+                    selectNum = 0;
+                    answer = true;
+                }else {
+                if(selectRow != -1 && selectCol != -1){
+                    selectNum = 0;
+                    println("Invalid number");
+                    answer = false;
+                    }
                 }
             }
         }
-        if(mouseX >= width/2+gridNumSize && mouseY >= height-70 && mouseX <= width/2+gridNumSize*2 && mouseY <= height-30){
+        if(mouseX >= gridNumSize/2 && mouseX <= gridNumSize/2+gridNumSize*2 && mouseY >= height/2 && mouseY <= height/2+gridNumSize/2){
             saveGame();
         }
-        if(mouseX >= width/2+gridNumSize*3 && mouseY >= height-70 && mouseX <= width/2+gridNumSize*4 && mouseY <= height-30){
+        if(mouseX >= gridNumSize/2+gridNumSize*2 && mouseX <= gridNumSize/2+gridNumSize*4 && mouseY >= height/2 && mouseY <= height/2+gridNumSize/2){
             stage = false;
+            menuAni = false;
         }
     }
 }
@@ -311,54 +322,46 @@ void openMenu(){
     fill(0);
     rect(0,0,width,menuY);
     textAlign(CENTER,CENTER);
-    textSize(50);
+    textSize(75);
     fill(255);
-    text("A2 Sudoku the Game",width/2,menuY-400);
-    textSize(25);
-    rect(width/2-100,menuY-270,200,40);
-    rect(width/2-100,menuY-220,200,40);
+    text("A2 Sudoku the Game",width/2,menuY-height*3/4);
+    textSize(50);
+    rect(width/2-200,menuY-height/2,400,100);
+    rect(width/2-200,menuY-height/2+150,400,100);
     fill(0);
-    text("New Game",width/2,menuY-250);
-    text("Load Game",width/2,menuY-200);
+    text("New Game",width/2,menuY-height/2+50);
+    text("Load Game",width/2,menuY-height/2+200);
 }
 
 //load game
 
-void fileSelected(File selection){
-    if(selection != null){
-        println("Loading: "+ selection.getAbsolutePath());
-        loadGame(selection.getAbsolutePath());
-    }
-}
+void loadGame() {
+  String path = sketchPath("saved_sudoku.txt");
+  String[] lines = null;
 
-void loadGame(String filename) {
-  String[] lines = loadStrings(filename);
+  try {
+    lines = loadStrings(path);
+  } catch (Exception e) {
+    println("No saved game found at: " + path);
+    return;
+  }
+
   for (int r = 0; r < 9; r++) {
     String[] parts = split(lines[r], "|");
     String[] nums = split(trim(parts[0]), " ");
     String[] locks = split(trim(parts[1]), " ");
-
     for (int c = 0; c < 9; c++) {
       grid[r][c] = int(nums[c]);
       locked[r][c] = (int(locks[c]) == 1);
     }
   }
-  stage = true;
-  println("Game loaded successfully");
+
+  println("Game loaded successfully!");
 }
 
 //save game
 
 void saveGame() {
-  selectOutput("Save your Sudoku game:", "fileSaveSelected");
-}
-
-void fileSaveSelected(File selection) {
-  if (selection == null) {
-    println("Save canceled.");
-    return;
-  }
-
   String[] lines = new String[9];
   for (int r = 0; r < 9; r++) {
     String row = "";
@@ -366,33 +369,30 @@ void fileSaveSelected(File selection) {
       row += grid[r][c];
       if (c < 8) row += " ";
     }
-
     row += " | ";
-
     for (int c = 0; c < 9; c++) {
       row += (locked[r][c] ? 1 : 0);
       if (c < 8) row += " ";
     }
-
     lines[r] = row;
   }
 
-  saveStrings(selection.getAbsolutePath(), lines);
-  println("Game saved to " + selection.getAbsolutePath());
+  saveStrings(sketchPath("saved_sudoku.txt"), lines);
+  println("Game saved to: " + sketchPath("saved_sudoku.txt"));
 }
 
 void drawSaveButton(){
     fill(255);
-    rect(width/2+gridNumSize, height-70, gridNumSize, 40);
+    rect(gridNumSize/2, height/2, gridNumSize*2, gridNumSize/2);
     fill(0);
-    textSize(20);
-    text("Save Game", width/2+gridNumSize+gridNumSize/2, height-50);
+    textSize(gridNumSize/5);
+    text("Save Game", gridNumSize+gridNumSize/2, height/2+gridNumSize/4);
 }
 
 void drawMenuButton(){
     fill(255);
-    rect(width/2+gridNumSize*3, height-70, gridNumSize, 40);
+    rect(gridNumSize/2+gridNumSize*2, height/2, gridNumSize*2, gridNumSize/2);
     fill(0);
-    textSize(20);
-    text("Menu", width/2+gridNumSize*3+gridNumSize/2, height-50);
+    textSize(gridNumSize/5);
+    text("Menu", gridNumSize*3+gridNumSize/2, height/2+gridNumSize/4);
 }
